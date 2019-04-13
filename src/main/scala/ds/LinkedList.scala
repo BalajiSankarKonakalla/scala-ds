@@ -2,11 +2,12 @@ package ds
 
 import scala.annotation.tailrec
 
-class LinkedList[T] private(elements: Seq[T]) {
+class LinkedList[T] (elements: Seq[T]) {
 
   val head = new Node(elements.head)
+
   @tailrec
-  private def tail(n: Node[T] = head): Node[T] = {
+  protected final def tail(n: Node[T] = head): Node[T] = {
     n.next match {
       case nextEle: Some[Node[T]] => tail(nextEle.get)
       case None => n
@@ -15,16 +16,24 @@ class LinkedList[T] private(elements: Seq[T]) {
   elements.tail.foreach(e => tail().next = Some(new Node[T](e)))
 
   override def toString: String = {
-    getStr(head)
+    getStr()
+  }
+
+
+  def getDirection(node: Node[T], direction: Boolean = true): Option[Node[T]] = direction match {
+    case true => node.next
+    case false => node.prev
   }
 
   @tailrec
-  protected final def getStr(n: Node[T] = head,  s:String = "", sep: String = " -> "): String = {
-    n.next match {
-      case t: Some[Node[T]] => getStr(t.get, s + n.data + sep)
+  protected final def getStr(n: Node[T] = head,  s:String = "", sep: String = " -> ", direction: Boolean = true): String = {
+    getDirection(n,direction) match {
+      case t: Some[Node[T]] => getStr(t.get, s + n.data + sep, sep, direction)
       case _ => s + n.data
     }
   }
+
+  def insert(n: T) = tail().next=Some(new Node(n))
 
 }
 
